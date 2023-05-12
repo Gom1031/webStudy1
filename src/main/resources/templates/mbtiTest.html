@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>mbti테스트</title>
+
+    <style>
+        .no-bullet {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>테스트</h1>
+    <form action="/mbti/result" method="post">
+        <ul class="no-bullet">
+            <li th:each="question : ${questions}">
+                <span th:text="${question.id + '. ' + question.content}"></span>
+                <div th:each="i: ${#numbers.sequence(1, 5)}">
+                    <label th:for="'score' + ${question.id} + '_' + ${i}">[[${i} + '점: ']]</label>
+                    <input type="radio" th:name="'score' + ${question.id}" th:value="${i}" th:id="'score' + ${question.id} + '_' + ${i}"/>
+                </div>
+                <hr>
+            </li>
+        </ul>
+        <button type="submit">제출하기</button>
+    </form>
+</body>
+</html>
