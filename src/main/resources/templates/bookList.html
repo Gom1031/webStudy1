@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book List</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<h1>Book List</h1>
+<div id="bookList"></div>
+
+<h2>Add a new book</h2>
+<form id="addBookForm">
+  <label for="title">Title:</label><br>
+  <input type="text" id="title" name="title"><br>
+  <label for="author">Author:</label><br>
+  <input type="text" id="author" name="author"><br>
+  <input type="submit" value="Add Book">
+</form>
+
+<h2>Update a book</h2>
+<form id="updateBookForm" style="display: none;">
+  <input type="hidden" id="bookId" name="bookId">
+  <label for="newTitle">New Title:</label><br>
+  <input type="text" id="newTitle" name="newTitle"><br>
+  <label for="newAuthor">New Author:</label><br>
+  <input type="text" id="newAuthor" name="newAuthor"><br>
+  <input type="submit" value="Update Book">
+</form>
+
+<script>
+  // 책 목록을 가져와서 화면에 표시하는 함수
+  function getAllBooks() {
+    axios.get('/api/books')
+            .then(function(response) {
+              var books = response.data;
+              $('#bookList').empty();
+              books.forEach(function(book) {
+                var bookItem = $('<p><a href="#">' + book.title + ' by ' + book.author + '</a></p>');
+                bookItem.on('click', 'a', function(event) {
+                  event.preventDefault();
+                  $('#updateBookForm').show();
+                  $('#bookId').val(book.id);
+                  $('#newTitle').val(book.title);
+                  $('#newAuthor').val(book.author);
+                });
+                $('#bookList').append(bookItem);
+              });
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+  }
+
+  // 새 책을 추가하는 함수
+  function addBook(newBook) {
+    axios.post('/api/books', newBook)
+            .then(function(response) {
+              // 책을 성공적으로 추가한 후, 책 목록을 업데이트합니다.
+              getAllBooks();
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+  }
+  // 책 정보를 수정하는 함수
+  function updateBook(bookId, updatedBook) {
+    axios.put(`/api/books/${bookId}`, updatedBook)
+            .then(function (response) {
+              // 책 정보를 성공적으로 수정한 후, 책 목록을 업데이트합니다.
+              getAllBooks();
+              $('#updateBookForm').hide();
+            })
+            .catch(function (error) {
+              console.error(error);
+            });
+  }
+    // 페이지가 로드될 때 책 목록을 가져옵니다.
+    $(document).ready(function () {
+      getAllBooks();
+    });
+
+    // 폼을 통해 새 책을 추가하려는 시도를 처리합니다.
+    $('#addBookForm').on('submit', function (event) {
+      event.preventDefault();  // 폼 제출에 의한 페이지 새로고침 방지
+      var newBook = {
+        title: $('#title').val(),
+        author: $('#author').val(),
+      };
+      addBook(newBook);
+    });
+
+    // 폼을 통해 책 정보를 수정하려는 시도를 처리합니다.
+    $('#updateBookForm').on('submit', function (event) {
+      event.preventDefault();  // 폼 제출에 의한 페이지 새로고침 방지
+      var bookId = $('#bookId').val();
+      var updatedBook = {
+        title: $('#newTitle').val(),
+        author: $('#newAuthor').val(),
+      };
+      updateBook(bookId, updatedBook);
+    });
+</script>
+</body>
+</html>

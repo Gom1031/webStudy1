@@ -1,10 +1,78 @@
+<!--https://nct.go.kr/distMental/rating/rating02_2.do-->
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>우울증 진단 페이지</title>
+    <title>우울증 테스트</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const radioInputs = document.querySelectorAll('input[type=radio]');
+            const totalElement = document.getElementById('total');
+
+            radioInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    let total = 0;
+
+                    radioInputs.forEach(radio => {
+                        if (radio.checked) {
+                            total += parseInt(radio.value);
+                        }
+                    });
+
+                    totalElement.textContent = `${total}점`;
+                });
+            });
+        });
+    </script>
+
 </head>
 <body>
+<h1>우울증 테스트</h1>
+<form action="depression/submit" method="post">
+    <table>
+        <thead>
+        <tr>
+            <th colspan="2">지난 2주일 동안 당신은 다음의 문제들로 인해서 얼마나 자주 방해를 받았습니까?</th>
+            <th>전혀 방해받지 않았다</th>
+            <th>며칠동안 방해받았다</th>
+            <th>7일이상 방해받았다</th>
+            <th>거의 매일 방해받았다</th>
+        </tr>
+        <tr>
+            <td>번호</td>
+            <td>질문</td>
+            <td>0점</td>
+            <td>1점</td>
+            <td>2점</td>
+            <td>3점</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="question : ${depQuestions}">
+            <td th:text="${question.id}"></td>
+            <td th:text="${question.content}"></td>
+            <td><input type="radio" th:name="'score' + ${question.id}" value="0" required></td>
+            <td><input type="radio" th:name="'score' + ${question.id}" value="1" required></td>
+            <td><input type="radio" th:name="'score' + ${question.id}" value="2" required></td>
+            <td><input type="radio" th:name="'score' + ${question.id}" value="3" required></td>
+        </tr>
+        <tr>
+            <td colspan="2">합계</td>
+            <td colspan="4" id="total">0점</td>
+        </tr>
+        </tbody>
+    </table>
 
+    <br>
+
+    <a href="/main">메인 페이지로</a>
+</form>
 </body>
 </html>

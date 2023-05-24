@@ -5,18 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "question")
+@Table(name = "depquestion")
 @Getter
 @Setter
-public class Question {
+public class DepQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content")
+    @Column(name = "question")
     private String content;
 
-
 }
-

@@ -1,8 +1,10 @@
 package mbti.demo.controller;
 
-import mbti.demo.entity.Question;
+import lombok.RequiredArgsConstructor;
+import mbti.demo.DTO.DepQuestionDTO;
+import mbti.demo.DTO.QuestionDTO;
+
 import mbti.demo.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,19 +15,19 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class BoardController {
     @GetMapping("/main")
     public String mainForm() {
 
         return "main";
     }
-    @Autowired
-    private QuestionService questionService;
+    private final QuestionService questionService;
 
     @GetMapping("/mbti/test")
     public String testForm(Model model) {
 
-        List<Question> questions = questionService.findAllQuestion();
+        List<QuestionDTO> questions = questionService.findAll();
         model.addAttribute("questions", questions);
 
         return "mbtiTest";
@@ -42,7 +44,9 @@ public class BoardController {
     }
 
     @GetMapping("/depression/test")
-    public String depressionTest() {
+    public String depressionTest(Model model) {
+        List<DepQuestionDTO> depQuestions = questionService.finddepAll();
+        model.addAttribute("depQuestions", depQuestions);
 
         return "depresstionTest";
     }
